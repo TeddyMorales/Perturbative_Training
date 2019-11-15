@@ -40,22 +40,37 @@ def learn_weight_distribution(trajectories, z, ϕ):
     return μ, Σ
 
 #function for trajectory distribution
-def get_traj_distribution(μ_w, Σ_w, z, ϕ, B):
+def get_traj_distribution(μ_w, Σ_w, des_duration=1.0):
+    des_t = np.arange(0.0,des_duration,1/hz)
+    z = get_phase(des_t)
+    ϕ = radial_basis(z,c,h)
     D = 2
     Ψ = np.kron(np.eye(int(μ_w.shape[0]/B),dtype=int),ϕ)
+    
     μ = np.dot(Ψ,μ_w)
     Σ = np.dot(np.dot(Ψ,Σ_w),Ψ.T)
     return μ, Σ
 
+#implemented function, might still have to mess with matrices dimensions to work
 def conditioning(μ_w, Σ_w, y_t, Σ_y, Ψ):
+    inverse = np.linalg.inv(Σ_y + np.dot(np.dot(Ψ.T, Σ_w), Ψ))
+    L = np.dot(np.dot(Σ_w, Ψ), inverse)
     
-    L = (Σ_w.dot(Ψ)).dot(np.linalg.inv(Σ_y + (Ψ.T).dot(Σ_w).dot(Ψ)))
-    
-    new_μ_w = μ_w + L.dot(y_t - (Ψ.T).dot(μ_w))
-    new_Σ_w = Σ_w - L.dot(Ψ.T).dot(Σ_w)
+    new_μ_w = μ_w + np.dot(L, y_t - np.dot(Ψ.T, μ_w))
+    new_Σ_w = Σ_w - np.dot(np.dot(L, Ψ.T), Σ_w)
     return new_μ_w, new_Σ_w
 
-
+def get_Ψ(z, dims, D, B):
+    z = np.array(z,ndmin=1)
+    length = z.shape[0]
+    c = np.linspace(0.0,1.0,B)
+    h = -(1/(B-1))**2/(2*np.log(0.3))
+    
+    basis = radial_basis(z,c,h)
+    Ψ = np.zeros((D * B, len(dims) * length))
+    for idx, d in enumerate(dims):
+        Ψ[d * B : (d+1) * B, idx * length : (idx + 1) * length] = basis.T
+    return Ψ
 
 #the data we will use
 #data = 
@@ -64,6 +79,9 @@ hz = 100
 
 #number of base functions
 B = 15
+
+#number of dimensions
+D = 2
 
 #z is the phase, can be extended over the data the other over the desired des_t amount of time
 z = get_phase(data[0,:])
@@ -86,7 +104,7 @@ trajectories = [interp_data(d,hz) for d in doa.data]
 #to learn weights over dimensions using the intrpolated data of each dimension, time invariant phases, basis functions
 μ_w, Σ_w = learn_weight_distribution(trajectories, z, ϕ)
 
-#computing trajectories ovesired time variable
+#computing trajectories ovedesired time variable
 des_duration = 2
 des_t = np.arange(0.0,des_duration,1/hz)
 
@@ -100,44 +118,53 @@ ws = np.random.multivariate_normal(μ_w, Σ_w, 10)
 ws = ws.reshape(ws.shape[0],-1,B)
 
 #finds distribution of new trajectory samples, returns distribution and mean trajectory
-μ_τ, Σ_τ = get_traj_distribution(μ_w, Σ_w, z, ϕ, B)
+μ_τ, Σ_τ = get_traj_distribution(μ_w, Σ_w, des_duration)
 
 #reshapes mean trajectory of distribution to BE plottable
+des_t = np.arange(0.0,des_duration,1/hz)
 μ_D = μ_τ.reshape((-1,des_t.shape[0]))
+uax.ax.plot(des_t,μ_D[0,:],'m',linewidth=5)
+uay.ax.plot(des_t,μ_D[1,:],'m',linewidth=5)
 
 
 σ_τ = np.sqrt(np.diag(Σ_τ))
 σ_D = σ_τ.reshape((-1,des_t.shape[0]))
+uax.ax.fill_between(des_t, μ_D[0,:]-2*σ_D[0,:], μ_D[0,:]+2*σ_D[0,:], color='m',alpha=0.3)
+uay.ax.fill_between(des_t, μ_D[1,:]-2*σ_D[1,:], μ_D[1,:]+2*σ_D[1,:], color='m',alpha=0.3)
 
 
+#which dimensions conditioned on [x, y, z]
+dims = [0, 1]
+#put value between 0 and 1 for timestep conditioned on (can condition on more than one)
+z = [.25]
+#put values at [x, y, z] (must match dims)
+features = [.4, .7]
+#how much slack you give the distribution
+Σ = .001
 
+#c_Ψ = R. D* times #L X D time B
+c_Ψ = get_Ψ(z, dims, D, B)
 
-Ψ = np.kron(np.eye(int(μ_w.shape[0]/B),dtype=int),ϕ)
+#y* is value of x and y we want to condition to in vector form
+#Σ* is a D X D matrix (covariance matrix)
+y_t = np.array(features)
+Σ_y = np.diag([Σ]*len(y_t))
 
 #call to function
-μ_τ, Σ_τ = conditioning(μ_τ, Σ_τ, 0.5, .1, Ψ)
-
-
-#Ψ = np.kron(np.eye(int(μ_τ.shape[0]/B),dtype=int),ϕ)
+c_μ_τ, c_Σ_τ = conditioning(μ_w, Σ_w, y_t, Σ_y, c_Ψ)
 
 #get new mean with conditioning
-#μ_τ = np.dot(Ψ.T,μ_τ)
-#get new distribution with conditioning
-#Σ_τ = np.dot(np.dot(Ψ,Σ_τ),Ψ.T)
+μ_τ, Σ_τ = get_traj_distribution(c_μ_τ, c_Σ_τ, des_duration)
 
-print(μ_τ.shape)
 des_t = np.arange(0.0,des_duration,1/hz)
 μ_D = μ_τ.reshape((-1,des_t.shape[0]))
-print(μ_D.shape)
+uax.ax.plot(des_t,μ_D[0,:],'b',linewidth=5)
+uay.ax.plot(des_t,μ_D[1,:],'b',linewidth=5)
 
-uax.ax.plot(des_t,μ_D[0,:],'m',linewidth=5)
-uay.ax.plot(des_t,μ_D[1,:],'m',linewidth=5)
 
-#print(np.diag(Σ_τ).shape)
-#σ_τ = np.sqrt(np.diag(Σ_τ))
-#σ_D = σ_τ.reshape((-1,des_t.shape[0]))
-
-#uax.ax.fill_between(des_t, μ_D[0,:]-2*σ_D[0,:], μ_D[0,:]+2*σ_D[0,:], color='m',alpha=0.3)
-#uay.ax.fill_between(des_t, μ_D[1,:]-2*σ_D[1,:], μ_D[1,:]+2*σ_D[1,:], color='m',alpha=0.3)
+σ_τ = np.sqrt(np.diag(Σ_τ))
+σ_D = σ_τ.reshape((-1,des_t.shape[0]))
+uax.ax.fill_between(des_t, μ_D[0,:]-2*σ_D[0,:], μ_D[0,:]+2*σ_D[0,:], color='b',alpha=0.3)
+uay.ax.fill_between(des_t, μ_D[1,:]-2*σ_D[1,:], μ_D[1,:]+2*σ_D[1,:], color='b',alpha=0.3)
 
 
