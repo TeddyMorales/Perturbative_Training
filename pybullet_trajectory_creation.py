@@ -8,8 +8,8 @@ physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.setGravity(0,0,-10)
 p.loadURDF("plane.urdf")
-sawyerId = p.loadURDF("rudis_magic_sawyer.urdf", [0,0,0])
-p.resetBasePositionAndOrientation(sawyerId, [0,0,0],[0,0,0,1])
+sawyerId = p.loadURDF("rudis_magic_sawyer.urdf", [0,0,1])
+p.resetBasePositionAndOrientation(sawyerId, [0,0,1],[0,0,0,1])
 # populate the following list with the indices of the 7 moveable joints 
 self.joints = [4,9,10,11,12,14,17]
 # set joint limits 
