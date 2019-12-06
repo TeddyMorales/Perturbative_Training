@@ -23,20 +23,17 @@ class basketbot(object):
         # TODO define robot position and orientation 
         self.bot = p.loadURDF("rudis_magic_sawyer.urdf", self.bot_start_position, self.bot_start_orientation)
 
-        # load ball
-        self.ball_start_position = [0,0,0]
-        self.ball_start_orientation = p.getQuaternionFromEuler([0,0,0])
-        # TODO define ball position and orientation and load ball 
-        self.ball = p.loadURDF("ball.urdf", self.ball_start_position, self.ball_start_orientation)
-        
-        # load basket for robot to hold 
-        self.basket_start_position = [0,0,0]
-        self.ball_start_orientation = p.
+        # load club
+        self.club_start_position = [0,0,0]
+        self.club_start_orientation = p.getQuaternionFromEuler([0,0,0])
+        # TODO define ball position and orientation and load rectangle to serve as club 
+        self.club = 
+       
         # load goal 
         self.goal_position = [0,0,0]
         self.goal_orientation = p.getQuaternionFromEuler([0,0,0])
-        # TODO get urdf for goal and define position/orientation 
-        self.goal = p.loadURDF("goal.urdf", self.goal_position, self.goal_orientation)
+        # TODO get urdf for goal (Sphere) and define position/orientation 
+        self.goal = 
 
 
     def static_perturbation(self, n, m, enviro_vars):
