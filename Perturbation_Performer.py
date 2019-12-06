@@ -3,7 +3,7 @@ import random
 import time
 import pybullet_data
 
-class basketbot(object):
+class golfbot(object):
 
     def __init__(self):
         # set up physics client and environment 
