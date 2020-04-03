@@ -135,5 +135,3 @@ while 1:
 	destination = [x,y,z]
 	move(np.array(destination), upper_limits, lower_limits, sawyerId, joints)
 	print("DONE MOTION")
-	
-

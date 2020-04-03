@@ -24,6 +24,7 @@ class ActorNetwork(object):
         self.sess = sess
         self.s_dim = state_dim
         self.a_dim = action_dim
+        # TODO need clarification on action bound
         self.action_bound = action_bound
         self.learning_rate = learning_rate
         self.tau = tau
@@ -50,12 +51,12 @@ class ActorNetwork(object):
         # This gradient will be provided by the critic network
         self.action_gradient = tf.placeholder(tf.float32, [None, self.a_dim])
 
-        # Combine the gradients here
+        # Combine the gradients here TODO what does this mean
         self.unnormalized_actor_gradients = tf.gradients(
             self.scaled_out, self.network_params, -self.action_gradient)
         self.actor_gradients = list(map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
 
-        # Optimization Op
+        # TODO is adam optimizer a good optimizer for our application
         self.optimize = tf.train.AdamOptimizer(self.learning_rate).\
             apply_gradients(zip(self.actor_gradients, self.network_params))
 
@@ -65,12 +66,14 @@ class ActorNetwork(object):
     def create_actor_network(self):
         inputs = tflearn.input_data(shape=[None, self.s_dim])
         net = tflearn.fully_connected(inputs, 400)
-        net = tflearn.layers.normalization.batch_normalization(net)
+        net = tflearn.layers.normalization.batch_normalization(net) 
+        #TODO why normalize layer, what is batch normalization
         net = tflearn.activations.relu(net)
         net = tflearn.fully_connected(net, 300)
         net = tflearn.layers.normalization.batch_normalization(net)
         net = tflearn.activations.relu(net)
         # Final layer weights are init to Uniform[-3e-3, 3e-3]
+        # TODO why are these initialized uniformly 
         w_init = tflearn.initializations.uniform(minval=-0.003, maxval=0.003)
         out = tflearn.fully_connected(
             net, self.a_dim, activation='tanh', weights_init=w_init)
@@ -78,6 +81,7 @@ class ActorNetwork(object):
         scaled_out = tf.multiply(out, self.action_bound)
         return inputs, out, scaled_out
 
+    # TODO why do we not have a train_target
     def train(self, inputs, a_gradient):
         self.sess.run(self.optimize, feed_dict={
             self.inputs: inputs,
@@ -165,6 +169,7 @@ class CriticNetwork(object):
         # linear layer connected to 1 output representing Q(s,a)
         # Weights are init to Uniform[-3e-3, 3e-3]
         w_init = tflearn.initializations.uniform(minval=-0.003, maxval=0.003)
+        # TODO are they using the weights of output as the output value??
         out = tflearn.fully_connected(net, 1, weights_init=w_init)
         return inputs, action, out
 
@@ -271,6 +276,7 @@ def train(sess, env, args, actor, critic, actor_noise):
                 env.render()
 
             # Added exploration noise
+            #TODO how is noise computed why would we need it 
             #a = actor.predict(np.reshape(s, (1, 3))) + (1. / (1. + i))
             a = actor.predict(np.reshape(s, (1, actor.s_dim))) + actor_noise()
 
@@ -288,7 +294,7 @@ def train(sess, env, args, actor, critic, actor_noise):
                 # Calculate targets
                 target_q = critic.predict_target(
                     s2_batch, actor.predict_target(s2_batch))
-
+                #TODO what is y_i, why dont we apply loss to last state, what is loss and how does it work?
                 y_i = []
                 for k in range(int(args['minibatch_size'])):
                     if t_batch[k]:
@@ -332,11 +338,16 @@ def main(args):
 
     with tf.Session() as sess:
 
+        # initialization of gym
         env = gym.make(args['env'])
+        # a way to get random numbers in the same manner each time (random algorithm is static)
         np.random.seed(int(args['random_seed']))
+        # set the random algorithm
         tf.set_random_seed(int(args['random_seed']))
+        # apply the random seed to environmetn
         env.seed(int(args['random_seed']))
 
+        # 
         state_dim = env.observation_space.shape[0]
         action_dim = env.action_space.shape[0]
         action_bound = env.action_space.high

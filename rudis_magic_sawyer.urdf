@@ -40,7 +40,7 @@
     <visual>
       <origin rpy="1.57079632679 0 -1.57079632679" xyz="0.26 0.345 -0.91488"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/pedestal.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/pedestal.DAE"/>
       </geometry>
       <material name="darkgray"/>
     </visual>
@@ -106,7 +106,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/base.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/base.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -126,7 +126,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l0.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l0.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -153,7 +153,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="//u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/head.DAE"/>
+          <mesh filename="//u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/head.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -193,7 +193,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l1.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l1.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -220,7 +220,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l2.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l2.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -247,7 +247,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l3.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l3.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -274,7 +274,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l4.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l4.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -314,7 +314,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l5.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l5.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -355,7 +355,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l6.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/sawyer_robot-master/sawyer_description/meshes/sawyer_pv/l6.DAE"/>
       </geometry>
       <material name="sawyer_red"/>
     </visual>
@@ -495,7 +495,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/electric_gripper_base.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/electric_gripper_base.DAE"/>
       </geometry>
     </visual>
     <collision>
@@ -528,7 +528,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/connector_plate/connector_plate.STL"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/connector_plate/connector_plate.STL"/>
       </geometry>
       <material name="black">
         <color rgba="0.05 0.05 0.05 1"/>
@@ -560,7 +560,7 @@
     <visual>
       <origin rpy="0 0 -3.14159265359" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/standard_narrow.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/standard_narrow.DAE"/>
       </geometry>
     </visual>
     <collision>
@@ -585,7 +585,7 @@
     <visual>
       <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/basic_soft_tip.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/basic_soft_tip.DAE"/>
       </geometry>
     </visual>
     <collision>
@@ -609,7 +609,7 @@
     <visual>
       <origin rpy="0 0 -0.0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/standard_narrow.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/standard_narrow.DAE"/>
       </geometry>
     </visual>
     <collision>
@@ -634,7 +634,7 @@
     <visual>
       <origin rpy="0 0 0.0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/u/teddy/CS378/robot/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/basic_soft_tip.DAE"/>
+          <mesh filename="/u/teddy/Robotics_Research/catkin_ws/src/intera_common-master/intera_tools_description/meshes/electric_gripper/fingers/basic_soft_tip.DAE"/>
       </geometry>
     </visual>
     <collision>
