@@ -5,7 +5,6 @@ import math
 from datetime import datetime
 import numpy as np
 
-
 def clip_joint_velocities(velocities):
     # Clips joint velocities into a valid range.
     for i in range(len(velocities)):
@@ -25,6 +24,8 @@ def get_control(target_joint_state, curJointPos, rotation=None):
     velocities = clip_joint_velocities(velocities)
     return velocities
 
+def get_pos(obj_uid):
+    return p.getBasePositionAndOrientation(obj_uid)    
 
 def move(joint_poses, upper_limits, lower_limits, sawyerId, joints):
     jd = [0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
@@ -37,18 +38,19 @@ def move(joint_poses, upper_limits, lower_limits, sawyerId, joints):
     step = .01
 
     #should prob be way lower, 0.01
-    error = .5
+    error = .1
 
     
     delta = curJointPos - joint_poses
-    print ("i'm in the move method")
+    #print ("i'm in the move method")
 
     while(np.linalg.norm(delta) > error):
-        print ("i'm in the while loop")
+        #print("ball pos = " + get_ball_pos())
+        # print ("i'm in the while loop")
         curJointPos += step * joint_poses
         # reset the joint state (ignoring all dynamics, not recommended to use during simulation)
         for i in range(p.getNumJoints(sawyerId)):
-            print ("I'm in the for loop")
+            #  print ("I'm in the for loop")
             jointInfo = p.getJointInfo(sawyerId, i)
             qIndex = jointInfo[3]
             if qIndex > -1:
@@ -58,7 +60,8 @@ def move(joint_poses, upper_limits, lower_limits, sawyerId, joints):
 
 
 def loadObjects():
-    sphereRadius = 0.05
+    # returns golf ball uid so we can use it when requesting position
+    sphereRadius = 1000000000.05
     colSphereId = p.createCollisionShape(p.GEOM_SPHERE, radius=sphereRadius)
     colBoxId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[sphereRadius, sphereRadius, sphereRadius])
     colClubId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[.03, .03, .03])
@@ -67,12 +70,13 @@ def loadObjects():
     mass = 1
     visualShapeId = -1
 
-    sphereUid = p.createMultiBody(mass, colSphereId, visualShapeId, [.5, 0, -.05])                                      
+    golf_ball_uid = p.createMultiBody(mass, colSphereId, visualShapeId, [.5, 0, -.05])
     targetBox = p.createMultiBody(mass, colBoxId, visualShapeId, [.5, 1, -.05])
     targetBox = p.createMultiBody(mass, colClubId, visualShapeId, [.5, -.2, -.05])
     table = p.createMultiBody(500, colTableId, visualShapeId, [.5, .5, -.5], [1, 1, 0, 0])
 
-    p.changeDynamics(sphereUid, -1, spinningFriction=0.001, rollingFriction=0.001, linearDamping=0.0)
+    p.changeDynamics(golf_ball_uid, -1, spinningFriction=0.001, rollingFriction=0.001, linearDamping=0.0)
+    return golf_ball_uid
 
 
 physicsClient = p.connect(p.GUI)
@@ -93,7 +97,7 @@ upper_limits = np.array([-3.0503, -3.8095, -3.0426, -3.0439, -2.9761, -2.9761, -
 lower_limits = np.array([3.0503, 2.2736, 3.0426, 3.0439, 2.9761, 2.9761, 4.7124])
 
 # loadball and bocks
-loadObjects()
+golf_ball_uid = loadObjects()
 
 p.setGravity(0,0,-10)
 t = 0
@@ -127,8 +131,13 @@ p.setJointMotorControl2(sawyerId, 25, p.POSITION_CONTROL, targetPosition=-1)
 
 destination = [.5, .5, .5, .5, .5, .5, .5, .5, .5, .5]
 destination2 = [-.5, -.5, -.5, -.5, -.5, -.5, -.5, -.5, -.5, -.5]
+
+print (get_pos(golf_ball_uid)[0])
+
 while 1:
     move(np.array(destination), upper_limits, lower_limits, sawyerId, joints)
     move(np.array(destination2), upper_limits, lower_limits, sawyerId, joints)
+    print (get_pos(golf_ball_uid)[0])
 
 print("DONE MOTION")
+
