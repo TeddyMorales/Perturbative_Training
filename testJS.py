@@ -5,6 +5,13 @@ import math
 from datetime import datetime
 import numpy as np
 
+def valid_put():
+    pass
+    # TODO: make sure center of ball is same distance away
+    # from top of the table as it was at start
+
+
+# purpose unknown: ask alejandro?
 def clip_joint_velocities(velocities):
     # Clips joint velocities into a valid range.
     for i in range(len(velocities)):
@@ -14,7 +21,7 @@ def clip_joint_velocities(velocities):
             velocities[i] = -1.0
     return velocities
 
-
+# purpose unknown: ask alejandro?
 def get_control(target_joint_state, curJointPos, rotation=None):
     # get target velocities for motion
     velocities = np.zeros(10)
@@ -26,7 +33,7 @@ def get_control(target_joint_state, curJointPos, rotation=None):
 
 def get_pos(obj_uid):
     return p.getBasePositionAndOrientation(obj_uid)    
-
+ 
 # input is trajectory, numpy array of postitions at each time step
 # while time is going, loop through the positions
 # and then extract what happens
@@ -43,10 +50,7 @@ def move(joint_poses, upper_limits, lower_limits, sawyerId, joints):
     #should prob be way lower, 0.01
     error = .1
 
-    
     delta = curJointPos - joint_poses
-    #print ("i'm in the move method")
-
 
     # TODO: account for hitting table and time being up
     while(np.linalg.norm(delta) > error):
@@ -66,23 +70,20 @@ def move(joint_poses, upper_limits, lower_limits, sawyerId, joints):
 
 def loadObjects():
     # returns golf ball uid so we can use it when requesting position
-    sphereRadius = 1000000000.05
+    sphereRadius = 0.05
     colSphereId = p.createCollisionShape(p.GEOM_SPHERE, radius=sphereRadius)
-    colBoxId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[sphereRadius, sphereRadius, sphereRadius])
     colClubId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[.03, .03, .03])
-    colTableId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[0.8, 0.2, 0.45])
+    colTableId = p.createCollisionShape(p.GEOM_BOX, halfExtents=[0.8, 0.2, 0.38])
 
     mass = 1
     visualShapeId = -1
 
     golf_ball_uid = p.createMultiBody(mass, colSphereId, visualShapeId, [.5, 0, -.05])
-    targetBox1 = p.createMultiBody(mass, colBoxId, visualShapeId, [.5, 1, -.05])
-    targetBox2 = p.createMultiBody(mass, colClubId, visualShapeId, [.5, -.2, -.05])
+    golf_club_uid = p.createMultiBody(mass, colClubId, visualShapeId, [.5, -.2, -.05])
     table = p.createMultiBody(500, colTableId, visualShapeId, [.5, .5, -.5], [1, 1, 0, 0])
 
-    p.changeDynamics(golf_ball_uid, -1, spinningFriction=0.001, rollingFriction=0.001, linearDamping=0.0)
+    # p.changeDynamics(golf_ball_uid, -1, spinningFriction=0.001, rollingFriction=0.001, linearDamping=0.0)
     return golf_ball_uid
-
 
 # DO NOT DELETE: global variables: positions of the goal
 goalX = .5
@@ -103,6 +104,7 @@ def is_success():
 def setEnvironment():
     physicsClient = p.connect(p.GUI)
     p.setAdditionalSearchPath(pybullet_data.getDataPath())
+    
 
     # load plane and sawyer
     p.loadURDF("plane.urdf", [0, 0, -.98])
@@ -110,7 +112,6 @@ def setEnvironment():
     sawyerId = p.loadURDF("C:/Users/Jain/aditij/catkin-ws/src/rudis_magic_sawyer.urdf", [0, 0, 0], useFixedBase = 1)
     p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 1)
 
-    p.resetBasePositionAndOrientation(sawyerId, [0, 0, 0], [0, 0, 0, 1])
 
     # set up joints
     joints = [4, 5, 9, 10, 11, 12, 14, 17, 23, 25]
@@ -128,7 +129,7 @@ def setEnvironment():
     useRealTimeSimulation = 1
     p.setRealTimeSimulation(useRealTimeSimulation)
 
-    starting_joint_angles = [-0.041662954890248294, 0, -1.0258291091425074, 0.0293680414401436, 2.17518162913313, -0.06703022873354225, 0.3968371433926965, 1.7659649178699421, 0, 0]
+    starting_joint_angles = [-0.041662954890248294 , 0, -1.0258291091425074, 0.0293680414401436, 2.17518162913313, -0.06703022873354225, 0.3968371433926965, 1.7659649178699421, 0, 0]
     p.setJointMotorControlArray(sawyerId, joints, p.POSITION_CONTROL, starting_joint_angles)
 
     miniTraj = [[.5, 0, .3], [.5, 0, .2], [.5, 0, .1]]
@@ -156,11 +157,18 @@ def simulate():
             return is_sucess()
             
 # load simulated enviroment
-golf_ball_uid = setEnvironment()        
+golf_ball_uid = setEnvironment()       
 # run simulation
 simulate()
 
 # prints final ball position
-print(get_pos(golf_ball_uid))
+print(get_pos(golf_ball_uid)[0])
 
 print("DONE MOTION")
+
+
+while (1):
+    keys = p.getKeyboardEvents()
+    print(keys)     
+
+    time.sleep(0.01)
